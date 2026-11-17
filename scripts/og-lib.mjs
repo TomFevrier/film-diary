@@ -9,8 +9,9 @@ import { assignFilmKeys } from '../src/lib/film-keys.js';
  * stats:  films    = distinct films seen that year      (same as the dashboard's "Films" tile)
  *         minutes  = time spent, every viewing counts   (same as "Time spent")
  *         cinema   = viewings at the cinema             (same as "At the cinema")
- * best:   the best-rated films whose FIRST EVER viewing is in that year (rewatches and films first seen in an earlier
- *         year are left out), best rating first and, for equal ratings, the most recently watched first.
+ * best:   the best-rated films whose FIRST EVER viewing is in that year, best rating first and, for equal ratings, the
+ *         most recently watched first. Left out: films first recorded in an earlier year, and films whose first recorded
+ *         viewing is flagged "rewatch" in the sheet (seen before the data starts, e.g. before the earliest past year).
  *         Films without a poster are skipped when enough others have one.
  */
 export function analyse(films, { year, n = 5 } = {}) {
@@ -31,7 +32,7 @@ export function analyse(films, { year, n = 5 } = {}) {
   };
 
   const candidates = [...firstView.values()]
-    .filter((f) => f.watchYear === year && f.rating != null)
+    .filter((f) => f.watchYear === year && !f.rewatch && f.rating != null)
     .sort((a, b) => b.rating - a.rating || b.date.localeCompare(a.date));
   const withPoster = candidates.filter((f) => f.poster);
   const best = (withPoster.length >= n ? withPoster : candidates).slice(0, n);

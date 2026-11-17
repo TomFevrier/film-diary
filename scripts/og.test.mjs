@@ -26,7 +26,9 @@ test('best = top-rated first watches of the year, rewatches and earlier discover
     film({ tmdbId: 2, title: 'New 4.5', date: '2026-03-01', rating: 4.5 }),
     film({ tmdbId: 3, title: 'New 5 older', date: '2026-01-10', rating: 5 }),
     film({ tmdbId: 4, title: 'New 5 recent', date: '2026-04-10', rating: 5 }),
-    film({ tmdbId: 5, title: 'Unrated', date: '2026-04-11' })
+    film({ tmdbId: 5, title: 'Unrated', date: '2026-04-11' }),
+    // the only viewing in the data, but flagged as a rewatch: seen before the data starts
+    film({ tmdbId: 6, title: 'Seen long ago', date: '2026-05-01', rating: 5, rewatch: true })
   ];
   const { best } = analyse(films, { n: 3 });
   assert.deepEqual(

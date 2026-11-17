@@ -25,8 +25,9 @@
   // svelte-ignore state_referenced_locally
   app.lang = lang ?? 'en';
   const card = $derived(og[app.lang]);
+  const site = og.siteUrl ?? config.siteUrl;
   // svelte-ignore state_referenced_locally
-  const url = config.siteUrl + (lang === 'fr' ? 'fr/' : '');
+  const url = site + (lang === 'fr' ? 'fr/' : '');
 
   onMount(() => {
     app.init(lang);
@@ -39,9 +40,9 @@
   <title>{app.year == null ? app.t('app.title.all') : app.t('app.title')}</title>
   <meta name="description" content={app.t('app.description')} />
   <link rel="canonical" href={url} />
-  <link rel="alternate" hreflang="en" href={config.siteUrl} />
-  <link rel="alternate" hreflang="fr" href="{config.siteUrl}fr/" />
-  <link rel="alternate" hreflang="x-default" href={config.siteUrl} />
+  <link rel="alternate" hreflang="en" href={site} />
+  <link rel="alternate" hreflang="fr" href="{site}fr/" />
+  <link rel="alternate" hreflang="x-default" href={site} />
   <!-- social previews (crawlers don't run scripts: they read the prerendered HTML, one page per language) -->
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content={app.t('app.title.all')} />
@@ -51,7 +52,7 @@
   <meta property="og:locale:alternate" content={app.lang === 'fr' ? 'en_US' : 'fr_FR'} />
   <meta property="og:description" content={card?.description ?? app.t('app.description')} />
   {#if card?.file}
-    <meta property="og:image" content={config.siteUrl + card.file} />
+    <meta property="og:image" content={site + card.file} />
     <meta property="og:image:width" content={og.width} />
     <meta property="og:image:height" content={og.height} />
     <meta property="og:image:alt" content={card.alt} />

@@ -26,6 +26,19 @@ const W = 1200;
 const H = 630;
 const GOLD = '#eab62f';
 
+/**
+ * Where the page lives, for the absolute URLs in the <meta> tags. Production: config.siteUrl. Netlify branch deploys
+ * and deploy previews: their own address, so that the preview's og:image can be opened (SITE_URL overrides both).
+ */
+function siteUrl() {
+  const own =
+    process.env.CONTEXT && process.env.CONTEXT !== 'production'
+      ? process.env.DEPLOY_PRIME_URL
+      : null;
+  const url = process.env.SITE_URL ?? (own ? `${own}/` : config.siteUrl);
+  return url.endsWith('/') ? url : `${url}/`;
+}
+
 // ---- posters --------------------------------------------------------------------------------------------------
 
 /** A poster as a data: URI (cached on disk), or null when it can't be fetched. */
@@ -327,7 +340,7 @@ async function main() {
   fs.rmSync(OUT_DIR, { recursive: true, force: true });
   fs.mkdirSync(OUT_DIR, { recursive: true });
 
-  const out = { width: W, height: H };
+  const out = { width: W, height: H, siteUrl: siteUrl() };
   for (const lang of Object.keys(TEXT)) {
     const { summary, description, hours } = describe(picked, lang);
     const shown = picked.best.map((f, i) => ({ title: titleOf(f, lang), image: images[i] }));
