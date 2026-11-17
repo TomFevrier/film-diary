@@ -207,3 +207,21 @@ svg text {
 [role='button'] {
   cursor: pointer;
 }
+
+/* No orphans. `balance` evens out the lines of short text (headings, hints, empty states, tooltips, the footer);
+   `pretty` only avoids a lone last word, which suits longer prose such as the cast list. */
+h1,
+h2,
+h3,
+header p,
+.hint,
+.sub,
+.empty,
+.tooltip,
+footer p {
+  text-wrap: balance;
+}
+dd,
+.meta {
+  text-wrap: pretty;
+}

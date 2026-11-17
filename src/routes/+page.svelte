@@ -45,7 +45,7 @@
   </div>
   <footer>
     <p class="legal">
-      {#each app.t('footer.tmdb').split('\n') as line (line)}{line}<br />{/each}
+      {#each app.t('footer.tmdb').split('\n') as line (line)}<span class="line">{line}</span>{/each}
     </p>
     <p>{app.t('updated', { date: updated })}</p>
   </footer>
@@ -68,6 +68,10 @@
     text-align: center;
     max-width: 720px;
     margin-inline: auto;
+  }
+  /* each sentence is its own block, so text-wrap: balance (inherited from app.css) evens out every one of them */
+  .line {
+    display: block;
   }
   footer p {
     margin: 4px 0;
