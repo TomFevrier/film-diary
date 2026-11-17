@@ -1,3 +1,4 @@
+import { replaceState } from '$app/navigation';
 import raw from './data/films.json';
 import { descending } from 'd3-array';
 import { makeFormats } from './format.js';
@@ -44,6 +45,28 @@ const preds = {
   new: (f) => f.filmYear === f.watchYear,
   festival: (f) => f.festivals.length > 0
 };
+
+/** The browser's language: the first of navigator.languages that is English or French, otherwise English. */
+function browserLang() {
+  for (const l of navigator.languages?.length ? navigator.languages : [navigator.language]) {
+    const base = String(l).toLowerCase().split('-')[0];
+    if (base === 'fr' || base === 'en') return base;
+  }
+  return 'en';
+}
+
+/** Mirror a choice in the URL (?lang=…, ?year=…) without adding a history entry. */
+function syncParam(name, value) {
+  try {
+    const url = new URL(location.href);
+    url.searchParams.set(name, value);
+    // the URL comes from location.href, so it already contains the base path: resolve() would add it twice
+    // eslint-disable-next-line svelte/no-navigation-without-resolve
+    replaceState(url, {});
+  } catch {
+    // the router isn't ready (or this isn't a browser): the URL just isn't updated
+  }
+}
 
 class App {
   lang = $state('en');
@@ -126,26 +149,29 @@ class App {
   setYear(y) {
     this.year = y;
     this.filters = {};
+    syncParam('year', y == null ? 'all' : y);
   }
 
-  setLang(l) {
+  applyLang(l) {
     this.lang = l;
-    try {
-      localStorage.setItem('lang', l);
-    } catch {
-      // storage can be blocked (private mode); the language just isn't remembered
-    }
     if (typeof document !== 'undefined') document.documentElement.lang = l;
   }
+  setLang(l) {
+    this.applyLang(l);
+    syncParam('lang', l);
+  }
+
+  /**
+   * Initial state, in this order: URL parameters (?lang=fr|en, ?year=2024|all), then the browser's language and the
+   * latest year. Called once on the client.
+   */
   init() {
-    let l = null;
-    try {
-      l = new URLSearchParams(location.search).get('lang') || localStorage.getItem('lang');
-    } catch {
-      // no storage access: fall back to the browser language
-    }
-    l ??= navigator.language?.toLowerCase().startsWith('fr') ? 'fr' : 'en';
-    this.setLang(l === 'fr' ? 'fr' : 'en');
+    const params = new URLSearchParams(location.search);
+    const lang = params.get('lang')?.toLowerCase();
+    this.applyLang(lang === 'fr' || lang === 'en' ? lang : browserLang());
+    const year = params.get('year')?.toLowerCase();
+    if (year === 'all') this.year = null;
+    else if (year && years.includes(+year)) this.year = +year;
   }
 }
 

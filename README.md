@@ -39,6 +39,18 @@ The sheet is read **at build time**, so your TMDb key never reaches the browser.
 
    If you ever had the `301` rule live, browsers and Netlify's edge cache it: redeploy the main site and check in a private window.
 
+## URL parameters
+
+The language and the year can be forced from the address, which makes a view easy to share or bookmark:
+
+| Parameter                | Effect                                            |
+| ------------------------ | ------------------------------------------------- |
+| `?lang=fr` or `?lang=en` | Force the language.                               |
+| `?year=2024`             | Show that year (it must be a year that has data). |
+| `?year=all`              | Show all years together.                          |
+
+Combine them with `&`, for example `tomfevrier.io/film-diary/?lang=fr&year=2023`. Without a parameter the language follows the browser (the first of its preferred languages that is English or French, otherwise English) and the year is the latest one. Invalid values are ignored. Switching the language or the year in the page updates the URL too, so reloading or sharing it keeps the same view; nothing is stored in the browser.
+
 ## Past years (the year dropdown)
 
 The dashboard shows every year you give it, 2026 (the latest) by default, plus "All years". Only the **current year** comes from the Google Sheet and is re-read on every build. Past years are synced **once** into static files:
