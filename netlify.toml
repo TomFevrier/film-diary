@@ -9,6 +9,10 @@
   # The site is served at tomfevrier.io/film-diary/ (proxied from the main site, see README), so the router needs the sub-path.
   BASE_PATH = "/film-diary"
 
+# Branch deploys (og-image--<site>.netlify.app) are served from the root of their own address, not behind /film-diary/.
+[context.branch-deploy.environment]
+  BASE_PATH = ""
+
 # Keep the TMDb / Letterboxd cache between builds, so scheduled rebuilds only fetch new films.
 [[plugins]]
   package = "netlify-plugin-cache"
