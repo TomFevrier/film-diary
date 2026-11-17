@@ -114,7 +114,7 @@ function card({ stats, hours, films, lang }) {
             'div',
             {
               fontFamily: 'Lato',
-              fontWeight: 700,
+              fontWeight: 400,
               fontSize: 26,
               color: '#aab4e4',
               paddingTop: Math.round(size * 0.4) + (headline ? 8 : 0)
@@ -202,12 +202,13 @@ function card({ stats, hours, films, lang }) {
       'div',
       {
         position: 'absolute',
-        left: 0,
+        left: 14,
         top,
-        width: W,
+        width: W - 28,
         height: 18,
         justifyContent: 'space-between',
-        padding: '0 14px'
+        alignItems: 'center',
+        padding: 0
       },
       Array.from({ length: 36 }, () =>
         h('div', { width: 18, height: 12, borderRadius: 3, background: 'rgba(255,255,255,0.11)' })
