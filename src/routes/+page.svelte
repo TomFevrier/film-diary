@@ -1,5 +1,6 @@
 <script>
   import { onMount } from 'svelte';
+  import config from '../../config.json';
   import { app, generatedAt } from '$lib/state.svelte.js';
   import { initSegs } from '$lib/seg.js';
   import Header from '$lib/components/Header.svelte';
@@ -26,7 +27,15 @@
 
 <svelte:head>
   <title>{app.year == null ? app.t('app.title.all') : app.t('app.title')}</title>
-  <meta name="description" content={app.t('app.subtitle', { scope: '' })} />
+  <meta name="description" content={app.t('app.description')} />
+  <link rel="canonical" href={config.siteUrl} />
+  <!-- social previews (crawlers read the prerendered English page) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content={app.t('app.title.all')} />
+  <meta property="og:title" content={app.t('app.title.all')} />
+  <meta property="og:description" content={app.t('app.description')} />
+  <meta property="og:url" content={config.siteUrl} />
+  <meta name="twitter:card" content="summary" />
 </svelte:head>
 
 <div class="page">

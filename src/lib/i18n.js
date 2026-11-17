@@ -7,6 +7,10 @@ export const messages = {
   'app.title': { en: 'My year in film', fr: 'Mon année de cinéma' },
   'app.title.all': { en: 'My film diary', fr: 'Mon journal de cinéma' },
   'app.subtitle': { en: 'Everything I watched, {scope}', fr: 'Tout ce que j’ai vu, {scope}' },
+  'app.description': {
+    en: 'Every film I’ve watched, year by year: calendar, ratings, favourite directors, cinemas and more.',
+    fr: 'Tous les films que j’ai vus, année par année\u00a0: calendrier, notes, réalisateurs préférés, cinémas et plus encore.'
+  },
   'scope.all': { en: 'since {year}', fr: 'depuis {year}' },
   'scope.year': { en: 'in {year}', fr: 'en {year}' },
   'year.all': { en: 'All years', fr: 'Toutes les années' },

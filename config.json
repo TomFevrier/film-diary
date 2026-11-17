@@ -16,5 +16,7 @@
   },
   "_venueNames": "Display name overrides, applied after the 'Cinéma' prefix is removed (e.g. the sheet says 'Cinéma Prince Charles', the cinema is called 'Prince Charles Cinema').",
   "festivalKeywords": ["festival", "pifff"],
-  "_festivalKeywords": "A comment tag counts as a festival when it contains one of these words (case- and accent-insensitive). Add festivals whose name doesn't say 'festival', like PIFFF."
+  "_festivalKeywords": "A comment tag counts as a festival when it contains one of these words (case- and accent-insensitive). Add festivals whose name doesn't say 'festival', like PIFFF.",
+  "siteUrl": "https://tomfevrier.io/film-diary/",
+  "_siteUrl": "The public address of the site, with a trailing slash. Used for the canonical link and social previews (they need absolute URLs)."
 }
