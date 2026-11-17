@@ -37,6 +37,8 @@ The sheet is read **at build time**, so your TMDb key never reaches the browser.
 
    `netlify.toml` here already sets `BASE_PATH=/film-diary`. Using another path (or a subdomain)? Change `BASE_PATH` there (empty for a root/subdomain) and the `from` paths above.
 
+   The site's own `*.netlify.app` address works too: `netlify.toml` rewrites `/film-diary/…` to the root there, so the CSS and JS (requested under `/film-diary/_app/…`) load.
+
    If you ever had the `301` rule live, browsers and Netlify's edge cache it: redeploy the main site and check in a private window.
 
 ## URL parameters

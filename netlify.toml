@@ -18,3 +18,16 @@
   package = "netlify-plugin-cache"
   [plugins.inputs]
     paths = [".cache"]
+
+# The site's own address (<site>.netlify.app) serves the files from its root, but the pages ask for /film-diary/_app/…
+# (production base path). These rewrites make that address work too. They do not affect tomfevrier.io/film-diary/,
+# where the main site's proxy already strips the prefix (see README).
+[[redirects]]
+  from = "/film-diary"
+  to = "/"
+  status = 200
+
+[[redirects]]
+  from = "/film-diary/*"
+  to = "/:splat"
+  status = 200
