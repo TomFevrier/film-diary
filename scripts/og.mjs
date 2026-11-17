@@ -85,28 +85,17 @@ function glyph(name, size) {
   };
 }
 
-/** The films count is the headline (gold, serif); the other numbers are white and sans-serif. */
-const numberStyle = (size, headline, extra = {}) =>
-  headline
-    ? {
-        fontFamily: 'Playfair Display',
-        fontWeight: 700,
-        fontSize: size,
-        lineHeight: 1,
-        fontFeatureSettings: '"lnum"',
-        color: GOLD,
-        paddingTop: 4,
-        ...extra
-      }
-    : {
-        fontFamily: 'Assistant',
-        fontWeight: 800,
-        fontSize: size,
-        lineHeight: 1,
-        color: '#ffffff',
-        paddingTop: 2,
-        ...extra
-      };
+/** The films count is the headline (gold, bigger); the other numbers are white. Lining figures, so they sit on the baseline. */
+const numberStyle = (size, headline, extra = {}) => ({
+  fontFamily: 'Playfair Display',
+  fontWeight: 700,
+  fontSize: size,
+  lineHeight: 1,
+  fontFeatureSettings: '"lnum"',
+  color: headline ? GOLD : '#ffffff',
+  paddingTop: 4,
+  ...extra
+});
 
 function card({ stats, hours, films, lang }) {
   const T = TEXT[lang];
@@ -128,7 +117,7 @@ function card({ stats, hours, films, lang }) {
               fontWeight: 700,
               fontSize: 26,
               color: '#aab4e4',
-              paddingTop: Math.round(size * 0.4)
+              paddingTop: Math.round(size * 0.4) + (headline ? 8 : 0)
             },
             label
           )
