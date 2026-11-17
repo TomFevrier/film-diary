@@ -24,8 +24,8 @@ The sheet is read **at build time**, so your TMDb key never reaches the browser.
    ```toml
    [[redirects]]
      from = "/film-diary"
-     to = "/film-diary/"
-     status = 301
+     to = "https://<this-site>.netlify.app/"
+     status = 200
 
    [[redirects]]
      from = "/film-diary/*"
@@ -33,7 +33,11 @@ The sheet is read **at build time**, so your TMDb key never reaches the browser.
      status = 200      # proxy: the URL stays tomfevrier.io/film-diary/…
    ```
 
+   Both rules are proxies (`200`), not redirects. **Don't add a `301` from `/film-diary` to `/film-diary/`:** Netlify ignores trailing slashes when matching a rule, so that rule also matches `/film-diary/` and redirects it to itself (a "too many redirects" loop).
+
    `netlify.toml` here already sets `BASE_PATH=/film-diary`. Using another path (or a subdomain)? Change `BASE_PATH` there (empty for a root/subdomain) and the `from` paths above.
+
+   If you ever had the `301` rule live, browsers and Netlify's edge cache it: redeploy the main site and check in a private window.
 
 ## Past years (the year dropdown)
 
