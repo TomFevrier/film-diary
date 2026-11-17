@@ -40,8 +40,8 @@ The sheet is read **at build time**, so your TMDb key never reaches the browser.
 The dashboard shows every year you give it, 2026 (the latest) by default, plus "All years". Only the **current year** comes from the Google Sheet and is re-read on every build. Past years are synced **once** into static files:
 
 1. Put one CSV per past year in `data/history/` (any file name, e.g. `2022.csv`). Columns may differ a little from the live sheet: `tmdbId` _or_ `imdbId`, `femaleDirector` or `womenDirector`, `note_num` as a fallback rating, unknown columns are ignored.
-2. With `TMDB_API_KEY` in `.env`, run `npm run sync:history`. IMDb ids are resolved to TMDb ids, then posters, photos, French titles, debuts and Letterboxd averages are fetched. This writes `data/history/<name>.json`. It is slow the first time (Letterboxd pages are fetched politely, one at a time).
-3. **Commit the JSON files.** From then on builds only read them; no API calls are made for past years. A history file is re-synced only if its CSV changes or you run `npm run sync:history:force`.
+2. With `TMDB_API_KEY` in `.env`, run `pnpm run sync:history`. IMDb ids are resolved to TMDb ids, then posters, photos, French titles, debuts and Letterboxd averages are fetched. This writes `data/history/<name>.json`. It is slow the first time (Letterboxd pages are fetched politely, one at a time).
+3. **Commit the JSON files.** From then on builds only read them; no API calls are made for past years. A history file is re-synced only if its CSV changes or you run `pnpm run sync:history:force`.
 
 If the live sheet also contains rows of a year that has a history file, the sheet wins for that year. Rows with no id (or an id TMDb doesn't know) stay in the stats but get no poster.
 
@@ -52,14 +52,14 @@ Festival days in the calendar are inferred from the `comment` column: a tag coun
 ## Local use
 
 ```bash
-npm install
+pnpm install
 cp .env.example .env     # fill in the three values
-npm run dev              # syncs, then starts the dev server
-npm run build            # syncs, then writes ./build (static site)
-npm test                 # parser tests
+pnpm run dev              # syncs, then starts the dev server
+pnpm run build            # syncs, then writes ./build (static site)
+pnpm test                 # parser tests
 ```
 
-With no `.env` it reads `data/movies.csv` (or the fake `data/sample.csv` – regenerate with `npm run sample`). Without a TMDb key the dashboard still works, minus posters, French titles, director/actor photos, directorial debuts and (with Letterboxd) the "unpopular opinions" panel.
+With no `.env` it reads `data/movies.csv` (or the fake `data/sample.csv` – regenerate with `pnpm run sample`). Without a TMDb key the dashboard still works, minus posters, French titles, director/actor photos, directorial debuts and (with Letterboxd) the "unpopular opinions" panel.
 
 ## Fonts and icons
 
@@ -69,10 +69,10 @@ With no `.env` it reads `data/movies.csv` (or the fake `data/sample.csv` – reg
 ## Code quality
 
 ```bash
-npm run format        # Prettier: rewrites files (Svelte, JS, JSON, CSS, Markdown)
-npm run format:check  # same, but only reports
-npm run lint          # ESLint with the Svelte plugin (e.g. requires keys in {#each} blocks)
-npm run check         # format:check + lint + tests, what CI should run
+pnpm run format        # Prettier: rewrites files (Svelte, JS, JSON, CSS, Markdown)
+pnpm run format:check  # same, but only reports
+pnpm run lint          # ESLint with the Svelte plugin (e.g. requires keys in {#each} blocks)
+pnpm run check         # format:check + lint + tests, what CI should run
 ```
 
 Settings live in `.prettierrc`, `.prettierignore` and `eslint.config.js`.
