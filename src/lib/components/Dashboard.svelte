@@ -48,8 +48,8 @@
   <meta property="og:site_name" content={app.t('app.title.all')} />
   <meta property="og:title" content={app.t('app.title.all')} />
   <meta property="og:url" content={url} />
-  <meta property="og:locale" content={app.lang === 'fr' ? 'fr_FR' : 'en_US'} />
-  <meta property="og:locale:alternate" content={app.lang === 'fr' ? 'en_US' : 'fr_FR'} />
+  <meta property="og:locale" content={app.lang === 'fr' ? 'fr_FR' : 'en_GB'} />
+  <meta property="og:locale:alternate" content={app.lang === 'fr' ? 'en_GB' : 'fr_FR'} />
   <meta property="og:description" content={card?.description ?? app.t('app.description')} />
   {#if card?.file}
     <meta property="og:image" content={site + card.file} />
