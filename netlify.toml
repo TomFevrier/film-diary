@@ -6,8 +6,8 @@
 [build.environment]
   NODE_VERSION = "22"
   # Set SHEET_CSV_URL and TMDB_API_KEY in Site configuration → Environment variables (not here).
-  # The site is served at tomfevrier.io/films/ (proxied from the main site, see README), so the router needs the sub-path.
-  BASE_PATH = "/films"
+  # The site is served at tomfevrier.io/film-diary/ (proxied from the main site, see README), so the router needs the sub-path.
+  BASE_PATH = "/film-diary"
 
 # Keep the TMDb / Letterboxd cache between builds, so scheduled rebuilds only fetch new films.
 [[plugins]]

@@ -19,21 +19,21 @@ The sheet is read **at build time**, so your TMDb key never reaches the browser.
 4. **Netlify → Add new site → Import from GitHub** and pick the repo. `netlify.toml` already holds the build settings (`npm run build`, publish `build`, Node 22, persistent cache).
 5. **Site configuration → Environment variables:** add `SHEET_CSV_URL` and `TMDB_API_KEY`.
 6. **Scheduled refresh:** _Build & deploy → Build hooks → Add build hook_, copy the URL, and add it as a GitHub repo secret named `NETLIFY_BUILD_HOOK`. `.github/workflows/refresh.yml` then triggers a rebuild every 4 hours (and from the _Run workflow_ button), which re-reads the sheet.
-7. **Serve it at `tomfevrier.io/films/`.** Keep this as its own Netlify site (its `*.netlify.app` address is only used behind the scenes) and add to the **`netlify.toml` of your main site**:
+7. **Serve it at `tomfevrier.io/film-diary/`.** Keep this as its own Netlify site (its `*.netlify.app` address is only used behind the scenes) and add to the **`netlify.toml` of your main site**:
 
    ```toml
    [[redirects]]
-     from = "/films"
-     to = "/films/"
+     from = "/film-diary"
+     to = "/film-diary/"
      status = 301
 
    [[redirects]]
-     from = "/films/*"
+     from = "/film-diary/*"
      to = "https://<this-site>.netlify.app/:splat"
-     status = 200      # proxy: the URL stays tomfevrier.io/films/…
+     status = 200      # proxy: the URL stays tomfevrier.io/film-diary/…
    ```
 
-   `netlify.toml` here already sets `BASE_PATH=/films`. Using another path (or a subdomain)? Change `BASE_PATH` there (empty for a root/subdomain) and the `from` paths above.
+   `netlify.toml` here already sets `BASE_PATH=/film-diary`. Using another path (or a subdomain)? Change `BASE_PATH` there (empty for a root/subdomain) and the `from` paths above.
 
 ## Past years (the year dropdown)
 
