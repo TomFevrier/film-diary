@@ -1,0 +1,16 @@
+# Netlify build settings (the site is static; the sheet is read at build time by scripts/sync.mjs)
+[build]
+  command = "npm run build"
+  publish = "build"
+
+[build.environment]
+  NODE_VERSION = "22"
+  # Set SHEET_CSV_URL and TMDB_API_KEY in Site configuration → Environment variables (not here).
+  # The site is served at tomfevrier.io/films/ (proxied from the main site, see README), so the router needs the sub-path.
+  BASE_PATH = "/films"
+
+# Keep the TMDb / Letterboxd cache between builds, so scheduled rebuilds only fetch new films.
+[[plugins]]
+  package = "netlify-plugin-cache"
+  [plugins.inputs]
+    paths = [".cache"]

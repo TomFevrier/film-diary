@@ -1,0 +1,20 @@
+{
+  "_comment": "How the `medium` column is classified. Cinemas are recognised by a prefix (e.g. 'Cinéma Prince Charles'); media containing a physical keyword are physical (Blu-ray); everything else is home viewing (streaming/TV/VOD) unless listed in cinemaOverrides.",
+  "streaming": [],
+  "physical": ["blu-ray", "bluray", "blu ray", "4k uhd", "uhd", "dvd", "vhs", "4k"],
+  "cinemaOverrides": [],
+  "posters": {
+    "_comment": "'original': poster in the film's original language when it is English or French, otherwise the international (English) poster. 'always-original': original language whenever available.",
+    "policy": "original"
+  },
+  "cinemaPrefixes": ["Cinéma", "Cinema"],
+  "physicalKeywords": ["blu-ray", "bluray", "blu ray", "dvd", "4k uhd", "vhs"],
+  "defaultType": "streaming",
+  "maxActors": 10,
+  "venueNames": {
+    "Prince Charles": "Prince Charles Cinema"
+  },
+  "_venueNames": "Display name overrides, applied after the 'Cinéma' prefix is removed (e.g. the sheet says 'Cinéma Prince Charles', the cinema is called 'Prince Charles Cinema').",
+  "festivalKeywords": ["festival", "pifff"],
+  "_festivalKeywords": "A comment tag counts as a festival when it contains one of these words (case- and accent-insensitive). Add festivals whose name doesn't say 'festival', like PIFFF."
+}

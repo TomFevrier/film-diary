@@ -1,0 +1,9 @@
+node_modules
+build
+.svelte-kit
+.cache
+package-lock.json
+src/lib/data/films.json
+data/
+static/
+previews/

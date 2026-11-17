@@ -1,0 +1,51 @@
+{
+  "name": "cine-stats",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "npm run sync && vite dev",
+    "sync": "node scripts/sync.mjs",
+    "sample": "node scripts/make-sample.mjs",
+    "build": "npm run sync && vite build",
+    "preview": "vite preview",
+    "test": "node --test scripts/*.test.mjs",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint .",
+    "check": "npm run format:check && npm run lint && npm test",
+    "sync:history": "node scripts/sync.mjs --history-only",
+    "sync:history:force": "node scripts/sync.mjs --history-only --force-history"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@sveltejs/adapter-static": "^3.0.0",
+    "@sveltejs/kit": "^2.0.0",
+    "@sveltejs/vite-plugin-svelte": "^5.0.0",
+    "eslint": "^10.15.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-svelte": "^3.24.1",
+    "globals": "^17.14.0",
+    "netlify-plugin-cache": "^1.0.3",
+    "prettier": "^3.10.1",
+    "prettier-plugin-svelte": "^4.1.1",
+    "svelte": "^5.0.0",
+    "vite": "^6.0.0"
+  },
+  "dependencies": {
+    "@lucide/svelte": "^1.73.0",
+    "d3-array": "^3.2.4",
+    "d3-dsv": "^3.0.2",
+    "d3-format": "^3.1.3",
+    "d3-geo": "^3.1.1",
+    "d3-interpolate": "^3.0.2",
+    "d3-scale": "^4.0.2",
+    "d3-scale-chromatic": "^3.1.1",
+    "d3-shape": "^3.2.1",
+    "d3-time": "^3.1.1",
+    "d3-time-format": "^4.1.1",
+    "iso-3166-1": "^2.1.1",
+    "topojson-client": "^3.1.0",
+    "world-atlas": "^2.0.2"
+  }
+}

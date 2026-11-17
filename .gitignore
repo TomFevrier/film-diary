@@ -1,0 +1,8 @@
+node_modules
+.svelte-kit
+build
+.env
+.cache
+# personal data: fetched from the sheet at build time
+data/movies.csv
+src/lib/data/films.json
