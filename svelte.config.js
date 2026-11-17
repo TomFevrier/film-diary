@@ -9,7 +9,9 @@ export default {
   preprocess: vitePreprocess(),
   kit: {
     adapter: adapter({ fallback: undefined }),
-    paths: { base, relative: true },
+    // relative: false = absolute asset URLs (/film-diary/_app/…), so the page works with or without a trailing slash
+    // (tomfevrier.io/film-diary and tomfevrier.io/film-diary/). Relative URLs break without the slash.
+    paths: { base, relative: false },
     prerender: { handleHttpError: 'warn' }
   }
 };

@@ -33,7 +33,7 @@ The sheet is read **at build time**, so your TMDb key never reaches the browser.
      status = 200      # proxy: the URL stays tomfevrier.io/film-diary/…
    ```
 
-   Both rules are proxies (`200`), not redirects. **Don't add a `301` from `/film-diary` to `/film-diary/`:** Netlify ignores trailing slashes when matching a rule, so that rule also matches `/film-diary/` and redirects it to itself (a "too many redirects" loop).
+   Both rules are proxies (`200`), not redirects. **Don't add a `301` from `/film-diary` to `/film-diary/`:** Netlify ignores trailing slashes when matching a rule, so that rule also matches `/film-diary/` and redirects it to itself (a "too many redirects" loop). The site uses absolute asset paths (`paths.relative: false` in `svelte.config.js`), so both `/film-diary` and `/film-diary/` work with these rules.
 
    `netlify.toml` here already sets `BASE_PATH=/film-diary`. Using another path (or a subdomain)? Change `BASE_PATH` there (empty for a root/subdomain) and the `from` paths above.
 
