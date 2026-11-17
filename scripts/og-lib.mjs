@@ -13,8 +13,10 @@ import { assignFilmKeys } from '../src/lib/film-keys.js';
  *         most recently watched first. Left out: films first recorded in an earlier year, and films whose first recorded
  *         viewing is flagged "rewatch" in the sheet (seen before the data starts, e.g. before the earliest past year).
  *         Films without a poster are skipped when enough others have one.
+ *         A mix: up to `maxNew` (3) of them released that same year ("new releases", best first), the others older
+ *         ("classics", best first); when one group runs short the other fills in. Returned best first.
  */
-export function analyse(films, { year, n = 5 } = {}) {
+export function analyse(films, { year, n = 5, maxNew = 3 } = {}) {
   assignFilmKeys(films);
   year ??= Math.max(...films.map((f) => f.watchYear));
   const inYear = films.filter((f) => f.watchYear === year);
@@ -35,7 +37,13 @@ export function analyse(films, { year, n = 5 } = {}) {
     .filter((f) => f.watchYear === year && !f.rewatch && f.rating != null)
     .sort((a, b) => b.rating - a.rating || b.date.localeCompare(a.date));
   const withPoster = candidates.filter((f) => f.poster);
-  const best = (withPoster.length >= n ? withPoster : candidates).slice(0, n);
+  const pool = withPoster.length >= n ? withPoster : candidates;
+  const isNew = (f) => f.filmYear === year;
+  const fresh = pool.filter(isNew);
+  const classics = pool.filter((f) => !isNew(f));
+  const freshTake = Math.min(fresh.length, Math.max(maxNew, n - classics.length));
+  const picked = new Set([...fresh.slice(0, freshTake), ...classics.slice(0, n - freshTake)]);
+  const best = pool.filter((f) => picked.has(f));
   return { stats, best };
 }
 

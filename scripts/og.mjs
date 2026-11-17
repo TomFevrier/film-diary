@@ -121,7 +121,7 @@ function card({ stats, hours, films, lang }) {
       'div',
       { alignItems: 'center', height: 64 },
       icon ? glyph(icon, 30) : null,
-      h('div', numberStyle(size, headline, { marginRight: 14 }), value),
+      h('div', numberStyle(size, headline, { marginRight: 8 }), value),
       label
         ? h(
             'div',
@@ -159,6 +159,8 @@ function card({ stats, hours, films, lang }) {
   const lift = [46, 18, 0, 18, 46];
   const order = [0, 4, 1, 3, 2]; // paint order: outer posters first
   const count = films.length;
+  // the best film goes in the middle, in front; the next ones alternate to its left and right
+  films = films.reduce((row, f, i) => (i % 2 ? [f, ...row] : [...row, f]), []);
   const spread = 92;
   const fan = order
     .map((slot) => ({ slot, film: films[slot - ((5 - count) >> 1)] }))

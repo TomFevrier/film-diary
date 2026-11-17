@@ -95,3 +95,32 @@ test('description mentions only the cinema count, in each language', () => {
   );
   assert.doesNotMatch(describe(picked, 'en').description, /Blu-ray|streaming/i);
 });
+
+test('a mix of new releases (at most 3) and older films, best first', () => {
+  const old = (id, rating) =>
+    film({ tmdbId: id, title: `old ${id}`, filmYear: 1970, rating, date: `2026-01-${10 + id}` });
+  const fresh = (id, rating) =>
+    film({ tmdbId: id, title: `new ${id}`, filmYear: 2026, rating, date: `2026-02-${10 + id}` });
+  const films = [
+    fresh(1, 5),
+    fresh(2, 5),
+    fresh(3, 4.5),
+    fresh(4, 4.5),
+    old(5, 4),
+    old(6, 4),
+    old(7, 3.5)
+  ];
+  const titles = (r) => r.best.map((f) => f.title);
+  // 3 new + 2 classics, even though a 4th new release outranks the classics
+  assert.deepEqual(titles(analyse(films, {})), ['new 2', 'new 1', 'new 4', 'old 6', 'old 5']);
+  // too few classics: new releases fill the gap
+  assert.deepEqual(titles(analyse(films.slice(0, 5), {})), [
+    'new 2',
+    'new 1',
+    'new 4',
+    'new 3',
+    'old 5'
+  ]);
+  // too few new releases: classics fill the gap
+  assert.deepEqual(titles(analyse(films.slice(3), {})), ['new 4', 'old 6', 'old 5', 'old 7']);
+});
