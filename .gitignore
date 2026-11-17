@@ -6,3 +6,6 @@ build
 # personal data: fetched from the sheet at build time
 data/movies.csv
 src/lib/data/films.json
+# social preview image, generated from the data at build time
+src/lib/data/og.json
+static/og/

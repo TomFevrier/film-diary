@@ -162,13 +162,13 @@ class App {
   }
 
   /**
-   * Initial state, in this order: URL parameters (?lang=fr|en, ?year=2024|all), then the browser's language and the
-   * latest year. Called once on the client.
+   * Initial state, in this order: URL parameters (?lang=fr|en, ?year=2024|all), then the language the page is for
+   * (the /fr/ page), then the browser's language, and the latest year. Called once on the client.
    */
-  init() {
+  init(pageLang = null) {
     const params = new URLSearchParams(location.search);
     const lang = params.get('lang')?.toLowerCase();
-    this.applyLang(lang === 'fr' || lang === 'en' ? lang : browserLang());
+    this.applyLang(lang === 'fr' || lang === 'en' ? lang : (pageLang ?? browserLang()));
     const year = params.get('year')?.toLowerCase();
     if (year === 'all') this.year = null;
     else if (year && years.includes(+year)) this.year = +year;

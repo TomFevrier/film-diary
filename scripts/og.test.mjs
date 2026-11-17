@@ -1,0 +1,95 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { analyse, describe } from './og-lib.mjs';
+
+const film = (o) => ({
+  id: Math.random(),
+  date: '2026-01-01',
+  watchYear: 2026,
+  filmYear: 2000,
+  tmdbId: null,
+  imdbId: null,
+  title: 'X',
+  titles: {},
+  mediumType: 'streaming',
+  rewatch: false,
+  rating: null,
+  runtime: 100,
+  poster: '/p.jpg',
+  ...o
+});
+
+test('best = top-rated first watches of the year, rewatches and earlier discoveries excluded', () => {
+  const films = [
+    film({ tmdbId: 1, title: 'Old favourite', watchYear: 2025, date: '2025-05-01', rating: 5 }),
+    film({ tmdbId: 1, title: 'Old favourite', date: '2026-02-01', rating: 5, rewatch: true }),
+    film({ tmdbId: 2, title: 'New 4.5', date: '2026-03-01', rating: 4.5 }),
+    film({ tmdbId: 3, title: 'New 5 older', date: '2026-01-10', rating: 5 }),
+    film({ tmdbId: 4, title: 'New 5 recent', date: '2026-04-10', rating: 5 }),
+    film({ tmdbId: 5, title: 'Unrated', date: '2026-04-11' })
+  ];
+  const { best } = analyse(films, { n: 3 });
+  assert.deepEqual(
+    best.map((f) => f.title),
+    ['New 5 recent', 'New 5 older', 'New 4.5']
+  );
+});
+
+test('stats: distinct films, all viewings for hours and media', () => {
+  const films = [
+    film({ tmdbId: 1, mediumType: 'cinema', runtime: 120 }),
+    film({ tmdbId: 1, mediumType: 'cinema', runtime: 120, rewatch: true }),
+    film({ tmdbId: 2, mediumType: 'physical', runtime: 60 }),
+    film({ tmdbId: 3, runtime: 60 })
+  ];
+  const { stats } = analyse(films, {});
+  assert.deepEqual(stats, {
+    year: 2026,
+    films: 3,
+    minutes: 360,
+    cinema: 2,
+    physical: 1,
+    streaming: 1
+  });
+});
+
+test('films without a poster are skipped while enough others have one', () => {
+  const films = [
+    film({ tmdbId: 1, title: 'A', rating: 5, poster: null }),
+    film({ tmdbId: 2, title: 'B', rating: 4, poster: '/b.jpg' }),
+    film({ tmdbId: 3, title: 'C', rating: 3, poster: '/c.jpg' })
+  ];
+  assert.deepEqual(
+    analyse(films, { n: 2 }).best.map((f) => f.title),
+    ['B', 'C']
+  );
+  assert.deepEqual(
+    analyse(films, { n: 3 }).best.map((f) => f.title),
+    ['A', 'B', 'C']
+  );
+});
+
+test('description mentions only the cinema count, in each language', () => {
+  const picked = analyse(
+    [
+      film({
+        tmdbId: 1,
+        title: 'Amelie',
+        titles: { en: 'Amélie', fr: 'Le Fabuleux Destin d’Amélie Poulain' },
+        rating: 5,
+        mediumType: 'cinema',
+        runtime: 120
+      })
+    ],
+    {}
+  );
+  assert.equal(
+    describe(picked, 'en').description,
+    '2026: 1 films, 2 hours, 1 at the cinema. Best new discoveries so far: Amélie.'
+  );
+  assert.match(
+    describe(picked, 'fr').description,
+    /au cinéma\. Mes meilleures découvertes à ce jour\u00a0: Le Fabuleux Destin/
+  );
+  assert.doesNotMatch(describe(picked, 'en').description, /Blu-ray|streaming/i);
+});

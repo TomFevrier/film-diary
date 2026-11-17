@@ -77,6 +77,17 @@ pnpm test                 # parser tests
 
 With no `.env` it reads `data/movies.csv` (or the fake `data/sample.csv` – regenerate with `pnpm run sample`). Without a TMDb key the dashboard still works, minus posters, French titles, director/actor photos, directorial debuts and (with Letterboxd) the "unpopular opinions" panel.
 
+## Social preview image
+
+`scripts/og.mjs` (run by `dev` and `build`, after the sync) draws a 1200×630 card for link previews: the latest
+year, films, hours, viewings at the cinema / on Blu-ray / streaming, and a fan of the posters of the year's
+best-rated **first watches** (rewatches and films first seen in an earlier year are left out). There is one card per
+language, and one prerendered page per language, since crawlers don't run JavaScript: share
+`https://tomfevrier.io/film-diary/` for English or `…/film-diary/fr/` for French (the main page still picks the
+language from `?lang=` or the browser). The images (`static/og/`, hashed names) and `src/lib/data/og.json` are
+generated and not committed. If a poster can't be fetched the card shows a placeholder; if rendering fails the build
+carries on without an `og:image`. After changing the card, refresh Facebook's cache with the Sharing Debugger.
+
 ## Fonts and icons
 
 - Fonts come from Google Fonts (a `<link>` in `src/app.html`): **Lato** for text, **Assistant** for titles, **Playfair Display** for numerals and accents. The tokens are `--sans`, `--title` and `--serif` in `src/app.css`. Visitors' browsers fetch them from Google; to self-host instead, swap the `<link>` for `@fontsource` packages.
