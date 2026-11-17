@@ -20,7 +20,7 @@
   <div class="tile hero">
     <div class="k">{app.t('tile.time')}</div>
     <div class="v">{f.int(Math.round(all.total.minutes / 60))}<small>h</small></div>
-    <div class="s">{app.t('tile.time.sub', { span: f.daysHours(all.total.minutes) })}</div>
+    <div class="s">{app.t('tile.time.sub', { span: f.totalSpan(all.total.minutes) })}</div>
   </div>
   {#each types as t (t)}
     {@const s = byType[t]}

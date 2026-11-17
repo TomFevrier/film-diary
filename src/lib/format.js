@@ -93,15 +93,17 @@ export function makeFormats(lang) {
   const fullDate = tf.format(lang === 'fr' ? '%A %-d %B %Y' : '%A, %B %-d, %Y');
   const m = (min) => String(Math.round(min % 60)).padStart(2, '0');
   const stars = (r) => (r == null ? '–' : `${dec1(r).replace(/[.,]0$/, '')} / 5`); // plain-text fallback (aria labels); the UI draws <Stars>
-  const daysHours = (min) => {
-    let d = Math.floor(min / 1440);
-    let h = Math.round((min - d * 1440) / 60);
-    if (h === 24) {
-      d += 1;
-      h = 0;
+  /**
+   * Long totals for the "Time spent" tile: days rounded up ("117 days"), or hours rounded up below 72 hours
+   * ("58 hours"). French: "117 jours" / "58 heures".
+   */
+  const totalSpan = (min) => {
+    if (min < 72 * 60) {
+      const h = Math.ceil(min / 60);
+      if (lang === 'fr') return `${int(h)} ${h <= 1 ? 'heure' : 'heures'}`;
+      return `${int(h)} ${h === 1 ? 'hour' : 'hours'}`;
     }
-    if (lang === 'fr') return `${int(d)} j${h ? ` ${h} h` : ''}`;
-    return `${int(d)} ${d === 1 ? 'day' : 'days'}${h ? ` ${h}h` : ''}`;
+    return `${int(Math.ceil(min / 1440))} ${lang === 'fr' ? 'jours' : 'days'}`;
   };
   return (cache[lang] = {
     int,
@@ -121,8 +123,8 @@ export function makeFormats(lang) {
       const h = Math.floor(min / 60);
       return lang === 'fr' ? `${int(h)} h ${m(min)}` : `${int(h)}h ${m(min)}m`;
     },
-    daysHours,
-    /** like duration, but as days and hours above 48 hours */
+    totalSpan,
+    /** like duration, but whole hours (rounded up) from 48 hours on */
     span: (min) =>
       min >= 48 * 60
         ? `${int(Math.ceil(min / 60))} h`
