@@ -184,7 +184,7 @@
               onclick={() => app.openDetail(u)}
               onpointerenter={() => (hover = { o, x: ux, y: uy, w: uw, h: uh })}
               onpointerleave={() => (hover = null)}
-              use:tip={o === 'h' ? null : tipUnit(u)}
+              use:tip={tipUnit(u)}
             />
           {/each}
           {#if o === 'v'}
@@ -332,6 +332,16 @@
   }
   rect.u {
     cursor: pointer;
+  }
+  /* The frames are too small to tap. On phones (the horizontal layout) and on any touch screen they are not
+     interactive, so a tap lands on the decade bar behind them and shows the decade's tooltip instead. */
+  svg.h rect.u {
+    pointer-events: none;
+  }
+  @media (pointer: coarse) {
+    rect.u {
+      pointer-events: none;
+    }
   }
   text.lab {
     cursor: pointer;
