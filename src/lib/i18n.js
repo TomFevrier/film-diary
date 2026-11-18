@@ -55,7 +55,7 @@ export const messages = {
   // ── Calendar ──────────────────────────────────────────────────────────
   'cal.title': { en: 'Calendar', fr: 'Calendrier' },
   'cal.films': { en: 'Films', fr: 'Films' },
-  'cal.hours': { en: 'Hours', fr: 'Heures' },
+  'cal.time': { en: 'Time', fr: 'Durée' },
   'cal.less': { en: 'Less', fr: 'Moins' },
   'cal.more': { en: 'More', fr: 'Plus' },
   'cal.busiest': { en: 'Busiest day', fr: 'Jour le plus chargé' },

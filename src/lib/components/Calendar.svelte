@@ -26,7 +26,7 @@
         >{app.t('cal.films')}</button
       >
       <button aria-pressed={metric === 'hours'} onclick={() => (metric = 'hours')}
-        >{app.t('cal.hours')}</button
+        >{app.t('cal.time')}</button
       >
     </div>
   </div>
