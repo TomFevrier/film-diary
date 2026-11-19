@@ -2,7 +2,7 @@ import { replaceState } from '$app/navigation';
 import raw from './data/films.json';
 import { descending } from 'd3-array';
 import { makeFormats } from './format.js';
-import { translate, places } from './i18n.js';
+import { translate, places, venues } from './i18n.js';
 import { isFestival } from './festivals.js';
 import { assignFilmKeys } from './film-keys.js';
 import { decadeOf } from './stats.js';
@@ -81,6 +81,7 @@ class App {
   }
   title = (f) => f.titles?.[this.lang] ?? f.title;
   placeName = (p) => places[this.lang]?.[p] ?? p;
+  venueName = (v) => venues[this.lang]?.[v] ?? v;
   countryName = (code) => {
     try {
       return new Intl.DisplayNames([this.lang], { type: 'region' }).of(code) ?? code;

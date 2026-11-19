@@ -72,7 +72,7 @@
         <dl>
           <dt>{app.t('detail.watched')}</dt>
           <dd>
-            {f.date(f.parseDay(x.date))}{x.venue ? ` · ${x.venue}` : ''}{x.place
+            {f.date(f.parseDay(x.date))}{x.venue ? ` · ${app.venueName(x.venue)}` : ''}{x.place
               ? `, ${app.placeName(x.place)}`
               : ''}
           </dd>

@@ -10,6 +10,8 @@
         return app.t(`type.${v}`);
       case 'place':
         return app.placeName(v);
+      case 'venue':
+        return app.venueName(v);
       case 'country':
         return app.countryName(v);
       case 'genre':

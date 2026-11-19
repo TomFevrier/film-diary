@@ -220,3 +220,15 @@ export const places = {
   fr: Object.fromEntries(CITIES),
   en: Object.fromEntries(CITIES.map(([en, fr]) => [fr, en]))
 };
+
+// Ways of watching that are words rather than names, as written in the sheet's `medium` column (French) and in English.
+// Brands (Netflix, myCanal, Arte…) and cinemas are names: they stay as they are.
+const MEDIUMS = [
+  ['Piratage', 'Piracy'],
+  ['Avion', 'In-flight'],
+  ['Achat', 'Digital purchase']
+];
+export const venues = {
+  fr: Object.fromEntries(MEDIUMS.map(([fr, en]) => [en, fr])),
+  en: Object.fromEntries(MEDIUMS)
+};

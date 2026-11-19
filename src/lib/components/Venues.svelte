@@ -64,7 +64,13 @@
           onclick={() => app.toggle(c.key, r.key)}
           aria-pressed={on}
         >
-          <span class="name">{tab === 'cities' ? app.placeName(r.key) : r.key}</span>
+          <span class="name"
+            >{tab === 'cities'
+              ? app.placeName(r.key)
+              : c.key === 'venue'
+                ? app.venueName(r.key)
+                : r.key}</span
+          >
           <!-- count when the toggle is on Films, runtime when it is on Time -->
           <span class="val"
             >{#if metric === 'films'}<b>{f.int(r.count)}</b>{:else}{f.hours(r.minutes)}{/if}</span
