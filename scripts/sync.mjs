@@ -174,7 +174,7 @@ function normaliseRows(rows) {
       genres: [...new Set(splitList(r.genres).map(canonicalGenre))],
       femaleDirector: isTrue(col(r, 'femaleDirector', 'womenDirector')),
       // filled by enrichment (all optional)
-      poster: null,
+      posters: { en: null, fr: null }, // per page language
       originalLanguage: null,
       debut: null,
       avg: null
@@ -466,12 +466,15 @@ function applyEnrichment(films) {
       };
       f.originalTitle = m.originalTitle && m.originalTitle !== f.titles.en ? m.originalTitle : null;
       f.originalLanguage = m.originalLanguage;
-      f.poster = pickPoster(
-        { posters: m.posters },
-        m.originalLanguage,
-        m.posterPath,
-        config.posters?.policy
-      );
+      const poster = (lang) =>
+        pickPoster(
+          { posters: m.posters },
+          m.originalLanguage,
+          lang,
+          m.posterPath,
+          config.posters?.policy
+        );
+      f.posters = { en: poster('en'), fr: poster('fr') };
       f.debut = cache.debut[f.tmdbId]?.value ?? null;
       addPeople(f, m);
     }

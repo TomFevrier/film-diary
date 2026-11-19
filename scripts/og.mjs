@@ -336,7 +336,6 @@ async function main() {
     }
   ];
 
-  const images = await Promise.all(picked.best.map((f) => (f.poster ? poster(f.poster) : null)));
   const { default: satori } = await import('satori');
   const { Resvg } = await import('@resvg/resvg-js');
   fs.rmSync(OUT_DIR, { recursive: true, force: true });
@@ -345,6 +344,13 @@ async function main() {
   const out = { width: W, height: H, siteUrl: siteUrl() };
   for (const lang of Object.keys(TEXT)) {
     const { summary, description, hours } = describe(picked, lang);
+    // posters in the card's language
+    const images = await Promise.all(
+      picked.best.map((f) => {
+        const file = f.posters?.[lang] ?? f.posters?.en;
+        return file ? poster(file) : null;
+      })
+    );
     const shown = picked.best.map((f, i) => ({ title: titleOf(f, lang), image: images[i] }));
     const svg = await satori(card({ stats: picked.stats, hours, films: shown, lang }), {
       width: W,

@@ -36,7 +36,7 @@ export function analyse(films, { year, n = 5, maxNew = 3 } = {}) {
   const candidates = [...firstView.values()]
     .filter((f) => f.watchYear === year && !f.rewatch && f.rating != null)
     .sort((a, b) => b.rating - a.rating || b.date.localeCompare(a.date));
-  const withPoster = candidates.filter((f) => f.poster);
+  const withPoster = candidates.filter((f) => f.posters?.en || f.posters?.fr);
   const pool = withPoster.length >= n ? withPoster : candidates;
   const isNew = (f) => f.filmYear === year;
   const fresh = pool.filter(isNew);

@@ -231,20 +231,25 @@ export const canonicalGenre = (g) => genreMap.get(norm(g)) ?? g;
 // ---- TMDb picking helpers -----------------------------------------------------------------------
 
 /**
- * Poster choice. Policy "original": poster in the original language when that is English or French,
- * otherwise the international (English) poster. Falls back progressively so there is always *a* poster.
+ * Poster of a film for a page language (`lang`, "en" or "fr"). Same rule in cine-stats and video-club:
+ *   English page: an English-language poster whenever TMDb has one, then the original language, then French.
+ *   French page:  policy "original": English and French films keep their original poster, the others get the French
+ *                 one (then English, then the original language). Policy "always-original": the original language first.
+ * Within a language the best-rated poster wins; TMDb's default poster is the last resort, so there is always one.
  */
-export function pickPoster(images, originalLanguage, defaultPath, policy = 'original') {
+export function pickPoster(images, originalLanguage, lang, defaultPath, policy = 'original') {
   const list = [...(images?.posters ?? [])].sort(
     (a, b) =>
       (b.vote_average ?? 0) - (a.vote_average ?? 0) || (b.vote_count ?? 0) - (a.vote_count ?? 0)
   );
-  const by = (lang) => list.find((p) => p.iso_639_1 === lang)?.file_path;
+  const by = (l) => list.find((p) => p.iso_639_1 === l)?.file_path;
   const orig = originalLanguage || 'en';
   const wanted =
-    policy === 'always-original' || orig === 'en' || orig === 'fr'
-      ? [orig, 'en', 'fr']
-      : ['en', 'fr', orig];
+    lang === 'en'
+      ? ['en', orig, 'fr']
+      : policy === 'always-original' || orig === 'en' || orig === 'fr'
+        ? [orig, 'fr', 'en']
+        : ['fr', 'en', orig];
   for (const l of wanted) {
     const p = by(l);
     if (p) return p;

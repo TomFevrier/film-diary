@@ -15,7 +15,7 @@ const film = (o) => ({
   rewatch: false,
   rating: null,
   runtime: 100,
-  poster: '/p.jpg',
+  posters: { en: '/p.jpg', fr: '/p.jpg' },
   ...o
 });
 
@@ -57,9 +57,9 @@ test('stats: distinct films, all viewings for hours and media', () => {
 
 test('films without a poster are skipped while enough others have one', () => {
   const films = [
-    film({ tmdbId: 1, title: 'A', rating: 5, poster: null }),
-    film({ tmdbId: 2, title: 'B', rating: 4, poster: '/b.jpg' }),
-    film({ tmdbId: 3, title: 'C', rating: 3, poster: '/c.jpg' })
+    film({ tmdbId: 1, title: 'A', rating: 5, posters: { en: null, fr: null } }),
+    film({ tmdbId: 2, title: 'B', rating: 4, posters: { en: '/b.jpg', fr: '/b.jpg' } }),
+    film({ tmdbId: 3, title: 'C', rating: 3, posters: { en: '/c.jpg', fr: '/c.jpg' } })
   ];
   assert.deepEqual(
     analyse(films, { n: 2 }).best.map((f) => f.title),

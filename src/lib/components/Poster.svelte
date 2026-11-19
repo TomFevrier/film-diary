@@ -1,7 +1,9 @@
 <script>
   import { app } from '$lib/state.svelte.js';
   let { film, size = 'w185', rounded = true } = $props();
-  let failed = $state(false);
+  let failed = $state(null); // the path that failed to load (switching language may bring a working one)
+  // the poster in the page's language
+  const path = $derived(film.posters?.[app.lang] ?? film.posters?.en);
   const title = $derived(app.title(film));
   const hue = $derived([...film.title].reduce((h, c) => (h * 31 + c.charCodeAt(0)) % 360, 7));
   const bg = $derived(
@@ -10,13 +12,13 @@
 </script>
 
 <div class="poster" class:rounded>
-  {#if film.poster && !failed}
+  {#if path && path !== failed}
     <img
-      src="https://image.tmdb.org/t/p/{size}{film.poster}"
+      src="https://image.tmdb.org/t/p/{size}{path}"
       alt={title}
       loading="lazy"
       decoding="async"
-      onerror={() => (failed = true)}
+      onerror={() => (failed = path)}
     />
   {:else}
     <div class="ph" style:background={bg}><span>{title}</span></div>
