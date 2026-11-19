@@ -77,7 +77,7 @@ pnpm run build            # syncs, then writes ./build (static site)
 pnpm test                 # parser tests
 ```
 
-With no `.env` it reads `data/movies.csv` (or the fake `data/sample.csv` – regenerate with `pnpm run sample`). Without a TMDb key the dashboard still works, minus posters, French titles, director/actor photos, directorial debuts and (with Letterboxd) the "unpopular opinions" panel.
+With no `.env` it reads `data/movies.csv` (git-ignored: drop your own export there). Without a TMDb key the dashboard still works, minus posters, French titles, director/actor photos, directorial debuts and (with Letterboxd) the "unpopular opinions" panel.
 
 ## Social preview image
 

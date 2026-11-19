@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Builds src/lib/data/films.json from the Google Sheet (published CSV) + TMDb (+ Letterboxd ratings).
 //
-//   SHEET_CSV_URL  published CSV link (or a path to a local CSV)      – falls back to data/movies.csv, then data/sample.csv
+//   SHEET_CSV_URL  published CSV link (or a path to a local CSV)      – falls back to data/movies.csv
 //                  (the *current* year: re-read on every run)
 //   data/history/*.csv  past years. Each is synced ONCE into a static data/history/<name>.json (commit it);
 //                  after that only the JSON is used. Re-synced only when the CSV changes or with --force-history.
@@ -90,7 +90,7 @@ async function readCsv() {
     log('sheet: downloaded from Google Sheets');
     return text;
   }
-  const candidates = [SHEET_CSV_URL, 'data/movies.csv', 'data/sample.csv'].filter(Boolean);
+  const candidates = [SHEET_CSV_URL, 'data/movies.csv'].filter(Boolean);
   for (const c of candidates) {
     const f = path.resolve(root, c);
     if (fs.existsSync(f)) {
