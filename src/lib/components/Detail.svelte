@@ -37,7 +37,7 @@
               title={app.t('detail.letterboxd')}
               aria-label={app.t('detail.letterboxd')}
             >
-              <Logo name="letterboxd" height={10} />
+              <Logo name="letterboxd" height={12} />
             </a>
             <a
               href="https://www.themoviedb.org/movie/{x.tmdbId}"
@@ -46,7 +46,7 @@
               title={app.t('detail.tmdb')}
               aria-label={app.t('detail.tmdb')}
             >
-              <Logo name="tmdb" height={10} />
+              <Logo name="tmdb" height={12} />
             </a>
           </div>
         {/if}
@@ -62,7 +62,7 @@
           <span class="mine"><Stars value={x.rating} /></span>
           {#if x.avg}
             <span class="lb" title={app.t('detail.community')}>
-              <Logo name="letterboxd" height={10} />
+              <Logo name="letterboxd" height={12} />
               <b>{f.dec2(x.avg)}</b>
               <StarMark />
             </span>
@@ -132,7 +132,7 @@
   .dlg {
     position: relative;
     display: grid;
-    grid-template-columns: 170px 1fr;
+    grid-template-columns: 180px 1fr;
     gap: 22px;
     max-width: 640px;
     width: 100%;
@@ -146,7 +146,7 @@
       grid-template-columns: 1fr;
     }
     .poster-col {
-      max-width: 170px;
+      max-width: 180px;
     }
   }
   .x {
@@ -206,7 +206,7 @@
     align-items: center;
     justify-content: center;
     height: 26px;
-    padding: 0 7px;
+    padding: 0 9px;
     border-radius: 999px;
     background: #070b1ccc;
     border: 1px solid #ffffff26;
@@ -245,8 +245,8 @@
   .lb {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding-left: 14px;
+    gap: 4px;
+    padding-left: 12px;
     border-left: 1px solid var(--line);
     color: var(--text);
     font-size: 14px;
