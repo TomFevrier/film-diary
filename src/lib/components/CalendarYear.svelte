@@ -219,6 +219,7 @@
     height: auto;
   }
   rect[aria-label]:hover {
+    cursor: pointer;
     stroke: #fff;
     stroke-width: 1.5;
   }
