@@ -9,7 +9,7 @@ export const messages = {
   'app.subtitle': { en: 'Everything I watched, {scope}', fr: 'Tout ce que j’ai vu, {scope}' },
   'app.description': {
     en: 'Every film I’ve watched, year by year: calendar, ratings, favourite directors, cinemas and more.',
-    fr: 'Tous les films que j’ai vus, année par année\u00a0: calendrier, notes, réalisateurs préférés, cinémas et plus encore.'
+    fr: 'Tous les films que j’ai vus, année par année\u00a0: calendrier, notes, cinéastes préféré·e·s, cinémas et plus encore.'
   },
   'scope.all': { en: 'since {year}', fr: 'depuis {year}' },
   'scope.year': { en: 'in {year}', fr: 'en {year}' },
@@ -98,8 +98,8 @@ export const messages = {
 
   // ── Favourites ────────────────────────────────────────────────────────
   'people.title': { en: 'Favourites', fr: 'Favoris' },
-  'people.directors': { en: 'Directors', fr: 'Réalisateurs' },
-  'people.actors': { en: 'Actors', fr: 'Acteurs' },
+  'people.directors': { en: 'Directors', fr: 'Cinéastes' },
+  'people.actors': { en: 'Actors', fr: 'Comédien·ne·s' },
   'people.countries': { en: 'Countries', fr: 'Pays' },
   'people.genres': { en: 'Genres', fr: 'Genres' },
   'people.actors.hint': {
@@ -112,10 +112,20 @@ export const messages = {
   'people.men': { en: 'Men', fr: 'Hommes' },
   'people.twice': {
     en: 'Only those seen at least twice',
-    fr: 'Seulement ceux vus au moins deux fois'
+    fr: 'Seulement à partir de deux films vus'
   },
   'people.list': { en: 'List', fr: 'Liste' },
   'people.offmap': { en: 'Not on the map: {names}', fr: 'Absents de la carte\u00a0: {names}' },
+  'people.sort.count': { en: 'Most films', fr: 'Nombre de films' },
+  'people.sort.avg': { en: 'Best rated', fr: 'Meilleure moyenne' },
+  'people.hk': {
+    en: 'China includes Hong Kong ({n}).',
+    fr: 'La Chine inclut Hong Kong ({n}).'
+  },
+  'people.defunct': {
+    en: 'Former countries are counted under their main successor: USSR → Russia, Czechoslovakia → Czechia, East and West Germany → Germany, Yugoslavia → Serbia.',
+    fr: 'Les anciens pays sont comptés avec leur principal successeur\u00a0: URSS → Russie, Tchécoslovaquie → Tchéquie, RDA et RFA → Allemagne, Yougoslavie → Serbie.'
+  },
   'people.avg': { en: 'avg {n}', fr: 'moy. {n}' },
 
   // ── Unpopular opinions ────────────────────────────────────────────────

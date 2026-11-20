@@ -307,3 +307,21 @@ export function parseLetterboxdRating(html) {
   }
   return { rating: rating > 0 && rating <= 5 ? rating : null, count };
 }
+
+// ---- people: Latin spellings of names written in another script -----------------------------------
+
+/** True when a name is written with the Latin alphabet (accents, punctuation and spaces included). */
+export const isLatin = (s) => /^[\p{Script=Latin}\p{Script=Common}\p{M}]+$/u.test(s);
+
+/**
+ * The TMDb credit for a name written in the sheet: TMDb's `name` is the Latin spelling ("Zhang Ziyi"), while
+ * `original_name` keeps the native one ("章子怡"), so either can match.
+ */
+export const findCredit = (name, credits) =>
+  credits.find((c) => norm(c.original_name) === norm(name)) ??
+  credits.find((c) => norm(c.name) === norm(name)) ??
+  null;
+
+/** First Latin spelling among a person's TMDb name and aliases (also_known_as), or null. */
+export const latinAlias = (person) =>
+  [person?.name, ...(person?.also_known_as ?? [])].find((n) => n && isLatin(n)) ?? null;

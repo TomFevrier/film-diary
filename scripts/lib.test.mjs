@@ -11,7 +11,10 @@ import {
   pickPoster,
   venueName,
   earlierCandidates,
-  parseLetterboxdRating
+  parseLetterboxdRating,
+  isLatin,
+  findCredit,
+  latinAlias
 } from './lib.mjs';
 import config from '../config.json' with { type: 'json' };
 
@@ -155,4 +158,25 @@ test('unique() keeps the latest viewing, preferring one that has a rating', asyn
   assert.equal(s.films, 2); // distinct films
   assert.equal(s.avgRating, 4.5); // (5 + 4) / 2, per film
   assert.equal(s.total.minutes, 400); // time counts every viewing
+});
+
+test('latin names', () => {
+  assert.equal(isLatin('Éric Elmosnino'), true);
+  assert.equal(isLatin('Auliʻi Cravalho'), true);
+  assert.equal(isLatin('章子怡'), false);
+  assert.equal(isLatin('Александр Годунов'), false);
+});
+test('credit lookup by native or latin name', () => {
+  const credits = [{ id: 1, name: 'Zhang Ziyi', original_name: '章子怡' }];
+  assert.equal(findCredit('章子怡', credits).name, 'Zhang Ziyi');
+  assert.equal(findCredit('zhang ziyi', credits).id, 1);
+  assert.equal(findCredit('Nobody', credits), null);
+});
+test('latin alias', () => {
+  assert.equal(
+    latinAlias({ name: '章子怡', also_known_as: ['ਜ਼ਾਂਗ', 'Zhang Zi-Yi'] }),
+    'Zhang Zi-Yi'
+  );
+  assert.equal(latinAlias({ name: 'Chiaki Kuriyama', also_known_as: [] }), 'Chiaki Kuriyama');
+  assert.equal(latinAlias({ name: '栗山千明' }), null);
 });

@@ -31,6 +31,9 @@ import {
   venueName,
   earlierCandidates,
   parseLetterboxdRating,
+  isLatin,
+  findCredit,
+  latinAlias,
   FEATURE_MIN_RUNTIME,
   TV_MOVIE_GENRE,
   norm
@@ -193,6 +196,8 @@ cache.lb ??= {};
 cache.runtimes ??= {};
 cache.debut ??= {};
 cache.imdb ??= {};
+cache.credits ??= {};
+cache.aliases ??= {};
 const saveCache = () => {
   fs.mkdirSync(CACHE_DIR, { recursive: true });
   fs.writeFileSync(CACHE_FILE, JSON.stringify(cache));
@@ -437,18 +442,19 @@ async function enrichLetterboxd(films) {
   saveCache();
 }
 
-/** name (as written in the sheet) -> { id, p: profile path, g: 'f' | 'm' | 'x' } for people TMDb knows. */
+/** A TMDb credit -> { id, p: profile path, g: 'f' | 'm' | 'x' }. */
+const personInfo = (c) => ({
+  id: c.id,
+  p: c.profile || undefined,
+  g: { 1: 'f', 2: 'm', 3: 'x' }[c.gender]
+});
+/** name (as written in the sheet) -> personInfo for people TMDb knows. */
 const people = {};
 function addPeople(f, m) {
   const byName = new Map([...m.directors, ...(m.cast ?? [])].map((p) => [norm(p.name), p]));
   for (const name of [...f.directors, ...f.actors]) {
     const p = byName.get(norm(name));
-    if (p && (p.profile || p.gender))
-      people[name] ??= {
-        id: p.id,
-        p: p.profile || undefined,
-        g: { 1: 'f', 2: 'm', 3: 'x' }[p.gender]
-      };
+    if (p && (p.profile || p.gender)) people[name] ??= personInfo(p);
   }
 }
 
@@ -577,6 +583,87 @@ if (HISTORY_ONLY) {
   process.exit(0);
 }
 
+/**
+ * Names the sheet writes in another script (章子怡, Александр Годунов…) -> the Latin spelling TMDb has for the
+ * same person. Runs over every year, history included, so the frozen JSON files never need re-syncing.
+ */
+async function latinisePeople(films, people) {
+  if (!TMDB_API_KEY) return;
+  const isNative = (n) => n && !isLatin(n);
+  const wanted = films.filter((f) => f.tmdbId && [...f.directors, ...f.actors].some(isNative));
+  const ids = [...new Set(wanted.map((f) => f.tmdbId))];
+  const todo = ids.filter((id) => !fresh(cache.credits[id], 90));
+  log(`tmdb: ${ids.length} films with non-Latin names, ${todo.length} credits to fetch`);
+  await pool(todo, 4, async (id) => {
+    if (tmdbFailures >= 3) return;
+    try {
+      const d = await tmdb(`/movie/${id}/credits`, { language: 'en-US' });
+      const slim = (c) => ({
+        id: c.id,
+        name: c.name,
+        original_name: c.original_name,
+        profile: c.profile_path || null,
+        gender: c.gender || 0
+      });
+      cache.credits[id] = {
+        at: Date.now(),
+        people: [
+          ...(d?.crew ?? []).filter((c) => c.job === 'Director').map(slim),
+          ...(d?.cast ?? []).map(slim)
+        ]
+      };
+    } catch (e) {
+      log(`tmdb: credits of ${id} failed (${e.message})`);
+    }
+  });
+
+  // some people have a native name even in English: their aliases usually include a Latin one
+  const alias = async (pid) => {
+    if (!fresh(cache.aliases[pid], 90) && tmdbFailures < 3) {
+      try {
+        const d = await tmdb(`/person/${pid}`, { language: 'en-US' });
+        cache.aliases[pid] = { at: Date.now(), name: latinAlias(d) };
+      } catch (e) {
+        log(`tmdb: person ${pid} failed (${e.message})`);
+      }
+    }
+    return cache.aliases[pid]?.name ?? null;
+  };
+
+  const unresolved = new Set();
+  const renamed = new Map();
+  for (const f of wanted) {
+    const credits = cache.credits[f.tmdbId]?.people ?? [];
+    for (const key of ['directors', 'actors']) {
+      const out = [];
+      for (const name of f[key]) {
+        let next = name;
+        if (isNative(name)) {
+          const c = findCredit(name, credits);
+          const latin = c && (isLatin(c.name) ? c.name : await alias(c.id));
+          if (latin) {
+            next = latin;
+            renamed.set(name, latin);
+            if (c.profile || c.gender) people[latin] ??= personInfo(c);
+          } else unresolved.add(name);
+        }
+        out.push(next);
+      }
+      f[key] = [...new Set(out)];
+    }
+  }
+  // a name TMDb matched under its native spelling keeps its photo under the new one
+  for (const [old, latin] of renamed) {
+    if (people[old]) {
+      people[latin] ??= people[old];
+      delete people[old];
+    }
+  }
+  saveCache();
+  log(`names: ${renamed.size} renamed to a Latin spelling, ${unresolved.size} left as written`);
+  if (unresolved.size) log('names left as written:', [...unresolved].slice(0, 30).join(', '));
+}
+
 // the current year: re-read from the sheet on every run
 const currentFilms = await processRows(parseCsv(await readCsv()), 'current');
 const currentYears = new Set(currentFilms.map((f) => f.watchYear));
@@ -586,6 +673,7 @@ const films = [
   ...currentFilms
 ].sort((a, b) => a.date.localeCompare(b.date) || a.id.localeCompare(b.id));
 const allPeople = Object.assign({}, ...history.map((d) => d.people ?? {}), peopleFor(currentFilms));
+await latinisePeople(films, allPeople);
 
 // report so misclassifications are easy to spot in the CI log
 const byType = {};

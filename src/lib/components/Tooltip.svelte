@@ -32,6 +32,7 @@
     bind:clientHeight={h}
     style:left="{pos.left}px"
     style:top="{pos.top}px"
+    style:min-width={c.minWidth ? `${c.minWidth}px` : undefined}
   >
     {#if c.films?.length}
       <div class="posters">

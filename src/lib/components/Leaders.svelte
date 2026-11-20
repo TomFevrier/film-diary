@@ -4,6 +4,7 @@
   import { tip } from '$lib/tip.js';
   import Poster from './Poster.svelte';
   import WorldMap from './WorldMap.svelte';
+  import { mapRows } from '$lib/map-rows.js';
   import StarMark from './StarMark.svelte';
   import Venus from '@lucide/svelte/icons/venus';
   import Mars from '@lucide/svelte/icons/mars';
@@ -12,6 +13,7 @@
   let view = $state('map');
   let expanded = $state(false);
   let gender = $state('all'); // all | f | m
+  let sort = $state('count'); // count | avg
 
   const cfg = {
     directors: { key: 'director', by: (x) => x.directors, person: true },
@@ -34,6 +36,9 @@
   const all = $derived.by(() => {
     let t = tallied.filter((r) => eligible.has(r.key));
     if (c.person && gender !== 'all') t = t.filter((r) => people[r.key]?.g === gender);
+    // tally() already sorts by count; "best rated" puts unrated ones last and uses the count to break ties
+    if (sort === 'avg')
+      t = [...t].sort((a, b) => (b.avg ?? -1) - (a.avg ?? -1) || b.count - a.count);
     return t;
   });
   // As many rows as fit in the fixed-height body (rows are 50px + a 4px gap; two columns on wide screens)
@@ -42,11 +47,11 @@
   const fit = $derived(Math.max(1, Math.floor((bodyH + 4) / 54)) * (vw > 760 ? 2 : 1));
   const rows = $derived(expanded ? all : all.slice(0, fit));
   const canExpand = $derived(all.length > fit);
-  // tabs without a toolbar (e.g. Genres) hand its reserved height to the list, so the card height never changes
-  const hasTools = $derived(tab === 'countries' || (c.person && hasGender));
+  const inMap = $derived(tab === 'countries' && view === 'map');
+  const mapInfo = $derived(inMap ? mapRows(tallied) : null);
   const name = (k) =>
     tab === 'countries' ? app.countryName(k) : tab === 'genres' ? app.genreName(k) : k;
-  const top = $derived(all[0]?.count || 1);
+  const top = $derived(Math.max(1, ...all.map((r) => r.count)));
   const initials = (n) =>
     n
       .split(/\s+/)
@@ -81,7 +86,7 @@
     </div>
   </div>
 
-  <div class="tools" class:none={!hasTools}>
+  <div class="tools">
     {#if tab === 'countries'}
       <div class="seg" role="group">
         <button aria-pressed={view === 'map'} onclick={() => (view = 'map')}
@@ -111,15 +116,20 @@
         >
       </div>
     {/if}
+    {#if !inMap}
+      <div class="seg" role="group">
+        <button aria-pressed={sort === 'count'} onclick={() => (sort = 'count')}
+          >{app.t('people.sort.count')}</button
+        >
+        <button aria-pressed={sort === 'avg'} onclick={() => (sort = 'avg')}
+          >{app.t('people.sort.avg')}</button
+        >
+      </div>
+    {/if}
   </div>
 
   <!-- same height on every tab, the map included; a long list scrolls inside it -->
-  <div
-    class="body"
-    class:map={tab === 'countries' && view === 'map'}
-    style:--extra={hasTools ? '0px' : '40px'}
-    bind:clientHeight={bodyH}
-  >
+  <div class="body" class:map={tab === 'countries' && view === 'map'} bind:clientHeight={bodyH}>
     {#if tab === 'countries' && view === 'map'}
       <WorldMap rows={tallied} />
     {:else}
@@ -174,7 +184,17 @@
     {/if}
   </div>
   <div class="foot">
-    {#if !(tab === 'countries' && view === 'map')}
+    {#if tab === 'countries'}
+      {#if mapInfo?.hk}<span class="sub">{app.t('people.hk', { n: f.int(mapInfo.hk.count) })}</span
+        >{/if}
+      {#if mapInfo?.missing.length}<span class="sub"
+          >{app.t('people.offmap', {
+            names: mapInfo.missing.map((m) => `${app.countryName(m.key)} (${m.count})`).join(', ')
+          })}</span
+        >{/if}
+      <span class="sub">{app.t('people.defunct')}</span>
+    {/if}
+    {#if !inMap}
       {#if canExpand}<button class="more" onclick={() => (expanded = !expanded)}
           >{expanded ? app.t('less') : `${app.t('more')} (${all.length})`}</button
         >{/if}
@@ -185,9 +205,6 @@
 </div>
 
 <style>
-  .tools.none {
-    display: none;
-  }
   .tools {
     display: flex;
     gap: 10px;
@@ -197,7 +214,7 @@
     min-height: 32px; /* reserved on every tab so the card keeps its height */
   }
   .body {
-    height: calc(400px + var(--extra, 0px));
+    height: 400px;
     overflow-x: hidden;
     overflow-y: auto;
     scrollbar-width: thin;
@@ -207,7 +224,7 @@
   }
   @media (max-width: 760px) {
     .body {
-      height: calc(290px + var(--extra, 0px));
+      height: 290px;
     }
   }
   /* outline colours by gender: gold for women, purple for men, grey for unknown / non-binary */

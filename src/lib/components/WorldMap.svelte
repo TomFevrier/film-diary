@@ -1,20 +1,12 @@
 <script>
   import { geoOrthographic, geoPath, geoGraticule10 } from 'd3-geo';
-  import { feature } from 'topojson-client';
-  import iso from 'iso-3166-1';
-  import world from 'world-atlas/countries-110m.json';
   import { app } from '$lib/state.svelte.js';
   import { ramp } from '$lib/colors.js';
   import { tip, onActivate } from '$lib/tip.js';
+  import { countries, mapRows } from '$lib/map-rows.js';
+  import ColorScale from './ColorScale.svelte';
 
   let { rows } = $props(); // [{key: 'FR', count, ...}]
-
-  const num2a2 = new Map(iso.all().map((c) => [c.numeric, c.alpha2]));
-  const countries = feature(world, world.objects.countries).features.map((ft) => ({
-    code: num2a2.get(String(ft.id).padStart(3, '0')),
-    ft
-  }));
-  const onMap = new Set(countries.map((c) => c.code));
 
   // Three full globes: the Americas, Europe / Africa and Asia / Oceania, each tilted a little to the north.
   // Asia is listed last, so it is drawn on top of the other two. Two arrangements, both slightly overlapping:
@@ -57,9 +49,20 @@
     Object.entries(LAYOUTS).map(([k, l]) => [k, { box: l.box, views: build(l) }])
   );
 
-  const by = $derived(new Map(rows.map((r) => [r.key, r])));
-  const top = $derived(Math.max(1, ...rows.map((r) => r.count)));
-  const missing = $derived(rows.filter((r) => !onMap.has(r.key)));
+  const merged = $derived(mapRows(rows));
+  const hk = $derived(merged.hk);
+  const by = $derived(new Map(merged.rows.map((r) => [r.key, r])));
+  const top = $derived(Math.max(1, ...merged.rows.map((r) => r.count)));
+
+  // Selecting China selects Hong Kong too, so the filter matches the number shown
+  const codesOf = (code) => (code === 'CN' && hk ? ['CN', 'HK'] : [code]);
+  function toggle(code) {
+    const on = app.has('country', code);
+    for (const c of codesOf(code)) if (app.has('country', c) === on) app.toggle('country', c);
+  }
+
+  // The outline of the hovered / selected countries is drawn again on top of all the others, so neighbours never clip it
+  let hover = $state(null);
 </script>
 
 {#snippet globes(kind)}
@@ -84,20 +87,32 @@
             stroke="#0a0f24"
             stroke-width="0.5"
             class:hit={!!r}
-            class:sel={app.has('country', s.code)}
             role={r ? 'button' : undefined}
             tabindex={r ? -1 : undefined}
-            onclick={() => r && app.toggle('country', s.code)}
-            onkeydown={r ? onActivate(() => app.toggle('country', s.code)) : undefined}
+            onclick={() => r && toggle(s.code)}
+            onkeydown={r ? onActivate(() => toggle(s.code)) : undefined}
+            onpointerenter={() => r && (hover = s.code)}
+            onpointerleave={() => (hover = null)}
             use:tip={() =>
               r
                 ? {
                     title: app.countryName(s.code),
                     sub: app.t('unit.films', { n: r.count }),
                     avg: r.avg,
-                    films: r.films.slice(-3)
+                    films: r.films.slice(-3),
+                    minWidth: 150
                   }
                 : null}
+          />
+        {/each}
+        {#each v.shapes.filter((s) => by.has(s.code) && (s.code === hover || app.has('country', s.code))) as s (s.code)}
+          <path
+            d={s.d}
+            fill="none"
+            stroke="#fff"
+            stroke-width={app.has('country', s.code) ? 1.6 : 1}
+            stroke-linejoin="round"
+            pointer-events="none"
           />
         {/each}
       </g>
@@ -110,13 +125,9 @@
     {@render globes('wide')}
     {@render globes('tri')}
   </div>
-  {#if missing.length}
-    <p class="miss">
-      {app.t('people.offmap', {
-        names: missing.map((m) => `${app.countryName(m.key)} (${m.count})`).join(', ')
-      })}
-    </p>
-  {/if}
+  <div class="foot">
+    <ColorScale color={(t) => ramp(0.3 + 0.7 * Math.sqrt(t))} />
+  </div>
 </div>
 
 <style>
@@ -153,18 +164,8 @@
   path.hit {
     cursor: pointer;
   }
-  path.hit:hover {
-    stroke: #fff;
-    stroke-width: 1;
-  }
-  path.sel {
-    stroke: #fff;
-    stroke-width: 1.6;
-  }
-  .miss {
-    margin: 6px 0 0;
-    font-size: 12px;
-    color: var(--muted);
-    text-align: center;
+  .foot {
+    display: flex;
+    margin-top: 6px;
   }
 </style>

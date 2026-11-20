@@ -3,6 +3,7 @@
   import { app, years } from '$lib/state.svelte.js';
   import { ramp } from '$lib/colors.js';
   import CalendarYear from './CalendarYear.svelte';
+  import ColorScale from './ColorScale.svelte';
 
   let metric = $state('films');
   const f = $derived(app.fmt);
@@ -20,7 +21,7 @@
 
 <div class="card">
   <div class="card-head">
-    <h2>{app.t('cal.title')} {calYears.length === 1 && years.length > 1 ? calYears[0] : ''}</h2>
+    <h2>{app.t('cal.title')}</h2>
     <div class="seg" role="group">
       <button aria-pressed={metric === 'films'} onclick={() => (metric = 'films')}
         >{app.t('cal.films')}</button
@@ -63,12 +64,7 @@
           : f.duration(sum(best[1], (x) => x.runtime ?? 0))}</span
       >
     {/if}
-    <span class="scale">
-      <span>{app.t('cal.less')}</span>
-      {#each [0, 0.25, 0.5, 0.75, 1] as t (t)}<i style:background={ramp(0.18 + 0.82 * t)}
-        ></i>{/each}
-      <span>{app.t('cal.more')}</span>
-    </span>
+    <ColorScale color={(t) => ramp(0.18 + 0.82 * t)} />
   </div>
 </div>
 
@@ -127,18 +123,5 @@
   }
   .fest.on b {
     color: #fff;
-  }
-  .scale {
-    display: inline-flex;
-    gap: 4px;
-    align-items: center;
-    margin-left: auto;
-    font-size: 11px;
-  }
-  .scale i {
-    width: 12px;
-    height: 12px;
-    border-radius: 3px;
-    display: block;
   }
 </style>
