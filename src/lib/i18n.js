@@ -4,8 +4,8 @@
 //   • A missing language falls back to English, then to the key itself.
 export const messages = {
   // ── Page header ───────────────────────────────────────────────────────
-  'app.title': { en: 'My year in film', fr: 'Mon année de cinéma' },
-  'app.title.all': { en: 'My film diary', fr: 'Mon journal de cinéma' },
+  'app.title': { en: 'My Year in Film', fr: 'Mon année de cinéma' },
+  'app.title.all': { en: 'My Film Diary', fr: 'Mon journal de cinéma' },
   'app.subtitle': { en: 'Everything I watched, {scope}', fr: 'Tout ce que j’ai vu, {scope}' },
   'app.description': {
     en: 'Every film I’ve watched, year by year: calendar, ratings, favourite directors, cinemas and more.',

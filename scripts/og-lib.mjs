@@ -59,7 +59,7 @@ export const TEXT = {
     heading: 'MY YEAR IN FILM',
     films: 'films',
     hours: 'hours',
-    alt: 'My year in film',
+    alt: 'My Year in Film',
     summary: (y, films, hours, cinema) =>
       `${y}: ${films} films, ${hours} hours, ${cinema} at the cinema.`,
     picks: (titles) => ` Best new discoveries so far: ${list(titles, 'and')}.`
