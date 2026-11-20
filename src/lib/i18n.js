@@ -107,8 +107,8 @@ export const messages = {
   'people.countries': { en: 'Countries', fr: 'Pays' },
   'people.genres': { en: 'Genres', fr: 'Genres' },
   'people.actors.hint': {
-    en: 'Top-billed cast only (first 10 names of each film)',
-    fr: 'Têtes d’affiche uniquement (10 premiers noms de chaque film)'
+    en: 'Top-billed cast only (first 10 names)',
+    fr: 'Têtes d’affiche uniquement (10 premiers noms)'
   },
   'people.map': { en: 'Map', fr: 'Carte' },
   'people.all': { en: 'All', fr: 'Tous' },

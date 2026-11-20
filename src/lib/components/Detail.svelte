@@ -1,4 +1,6 @@
 <script>
+  import { fade } from 'svelte/transition';
+  import { cubicOut } from 'svelte/easing';
   import { app } from '$lib/state.svelte.js';
   import Poster from './Poster.svelte';
   import Stars from './Stars.svelte';
@@ -11,14 +13,33 @@
   const x = $derived(app.detail);
   const f = $derived(app.fmt);
   const close = () => (app.detail = null);
+
+  // The popup fades in and out, the dialog rising a little: no motion at all when the visitor prefers it that way
+  const calm = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const fadeBack = () => ({ duration: calm() ? 0 : 200 });
+  const rise = () => ({
+    duration: calm() ? 0 : 260,
+    easing: cubicOut,
+    css: (t, u) => `opacity: ${t}; transform: translateY(${u * 12}px) scale(${0.97 + 0.03 * t})`
+  });
 </script>
 
 <svelte:window onkeydown={(e) => e.key === 'Escape' && close()} />
 
 {#if x}
   <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
-  <div class="back" onclick={(e) => e.target === e.currentTarget && close()}>
-    <div class="dlg" role="dialog" aria-modal="true" aria-label={app.title(x)}>
+  <div
+    class="back"
+    transition:fade={fadeBack()}
+    onclick={(e) => e.target === e.currentTarget && close()}
+  >
+    <div
+      class="dlg"
+      transition:rise|global
+      role="dialog"
+      aria-modal="true"
+      aria-label={app.title(x)}
+    >
       <button class="x" onclick={close} aria-label={app.t('detail.close')}><X size={22} /></button>
 
       <div class="poster-col">
