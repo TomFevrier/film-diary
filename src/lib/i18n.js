@@ -91,6 +91,10 @@ export const messages = {
   'venues.events': { en: 'Tags', fr: 'Étiquettes' },
   'venues.metric.films': { en: 'Viewings', fr: 'Visionnages' },
   'venues.metric.time': { en: 'Time', fr: 'Durée' },
+  'venues.twice': {
+    en: 'Only those with at least two films',
+    fr: 'Seulement à partir de deux films vus'
+  },
   'venues.events.hint': {
     en: 'Tags from the comment column, seen at least twice',
     fr: 'Mentions de la colonne commentaire, vues au moins deux fois'
@@ -111,7 +115,7 @@ export const messages = {
   'people.women': { en: 'Women', fr: 'Femmes' },
   'people.men': { en: 'Men', fr: 'Hommes' },
   'people.twice': {
-    en: 'Only those seen at least twice',
+    en: 'Only those with at least two films',
     fr: 'Seulement à partir de deux films vus'
   },
   'people.list': { en: 'List', fr: 'Liste' },

@@ -15,9 +15,16 @@
   };
   const c = $derived(cfg[tab]);
   const f = $derived(app.fmt);
+  // Only items with two viewings or more are listed (counted on the unfiltered year, so filtering doesn't empty the list)
+  const eligible = $derived(
+    new Set(
+      tally(app.base().filter(c.src), c.by)
+        .filter((x) => x.count >= 2)
+        .map((x) => x.key)
+    )
+  );
   const rows = $derived.by(() => {
-    let r = tally(app.films(c.key).filter(c.src), c.by);
-    if (tab === 'events') r = r.filter((x) => x.count >= 2);
+    const r = tally(app.films(c.key).filter(c.src), c.by).filter((x) => eligible.has(x.key));
     return metric === 'films' ? r : [...r].sort((a, b) => b.minutes - a.minutes);
   });
   const val = (r) => (metric === 'films' ? r.count : r.minutes);
@@ -42,7 +49,7 @@
     </div>
   </div>
   <div class="tools">
-    <span class="sub">{tab === 'events' ? app.t('venues.events.hint') : ''}</span>
+    <span class="sub">{app.t(tab === 'events' ? 'venues.events.hint' : 'venues.twice')}</span>
     <div class="seg">
       <button aria-pressed={metric === 'films'} onclick={() => (metric = 'films')}
         >{app.t('venues.metric.films')}</button
